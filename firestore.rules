@@ -1,0 +1,17 @@
+// firestore.rules
+// Paste this in Firebase Console → Firestore → Rules tab
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /complaints/{complaintId} {
+      // Anyone can read complaints (public dashboard)
+      allow read: if true;
+      // Anyone can create (citizens submit reports)
+      allow create: if request.resource.data.keys().hasAll(['title', 'category', 'lat', 'lng', 'status'])
+                    && request.resource.data.title.size() > 0;
+      // Anyone can update status/votes (for hackathon demo; lock down in production)
+      allow update: if true;
+    }
+  }
+}
